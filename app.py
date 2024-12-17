@@ -75,6 +75,8 @@ def handle_message(event):
                 messages=[TextMessage(text="你是不是想哈囉？注意一點！")]
             )
         )
-        
+    else:
+        pass
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
