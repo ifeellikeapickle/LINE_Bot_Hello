@@ -68,13 +68,6 @@ def handle_message(event):
                 messages=[TextMessage(text="你哈囉了！請勿哈囉！")]
             )
         )
-    elif ("哈" in event.message.text) and ("哈哈" not in event.message.text):
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text="你是不是想哈囉？注意一點！")]
-            )
-        )
     else:
         pass
 
