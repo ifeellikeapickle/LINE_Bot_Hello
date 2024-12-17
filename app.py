@@ -52,6 +52,7 @@ def callback():
     return 'OK'
 
 keyword = "哈囉"
+focus_message = "不好意思大家!我最近比較需要專注，我比較容易分心，有訊息強迫症，我先退出群組了~  有事情可以透過ig或是line找我，謝謝！愛你們"
 allowed_chars = r".*"
 pattern = allowed_chars.join(keyword)
 regex = rf"{pattern}"
@@ -66,6 +67,13 @@ def handle_message(event):
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text="你哈囉了！請勿哈囉！")]
+            )
+        )
+    elif "心心" in event.message.text:
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=focus_message)]
             )
         )
     else:
