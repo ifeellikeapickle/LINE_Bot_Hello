@@ -50,18 +50,30 @@ def callback():
 
     return 'OK'
 
+keyword = "哈囉"
+allowed_chars = r".*"
+pattern = allowed_chars.join(keyword)
+regex = rf"{pattern}"
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
-    if "哈囉" in event.message.text:
-        with ApiClient(configuration) as api_client:
-            line_bot_api = MessagingApi(api_client)
-            line_bot_api.reply_message_with_http_info(
-                ReplyMessageRequest(
-                    reply_token=event.reply_token,
-                    messages=[TextMessage(text="請勿哈囉！")]
-                )
-            )
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
 
+    if re.search(regex, event.message.text):
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text="你哈囉了！請勿哈囉！")]
+            )
+        )
+    elif ("哈" in event.message.text) and ("哈哈" not in event.message.text):
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text="你是不是想哈囉？注意一點！")]
+            )
+        )
+        
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
