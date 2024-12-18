@@ -1,4 +1,4 @@
-from flask import Flask, request, abort
+from flask import Flask, request, abort, jsonify
 from dotenv import load_dotenv
 import os
 import re
@@ -50,6 +50,18 @@ def callback():
         abort(400)
 
     return 'OK'
+
+@app.route("/get", methods=['GET'])
+def get():
+    # Retrieve query parameters
+    param1 = request.args.get('param1', default='default_value')
+
+    # Create a response
+    response = {
+        'message': 'GET method received!',
+        'param1': param1
+    }
+    return jsonify(response)
 
 keyword = "哈囉"
 focus_message = "不好意思大家!我最近比較需要專注，我比較容易分心，有訊息強迫症，我先退出群組了~  有事情可以透過ig或是line找我，謝謝！愛你們"
