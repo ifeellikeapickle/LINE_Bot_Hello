@@ -63,10 +63,11 @@ def get():
     }
     return jsonify(response)
 
-keyword = "哈囉"
+keyword_hello = "哈囉"
+hello_warning_message = "請勿哈囉！"
 focus_message = "不好意思大家!我最近比較需要專注，我比較容易分心，有訊息強迫症，我先退出群組了~  有事情可以透過ig或是line找我，謝謝！愛你們"
 allowed_chars = r".*"
-pattern = allowed_chars.join(keyword)
+pattern = allowed_chars.join(keyword_hello)
 regex = rf"{pattern}"
 
 @handler.add(MessageEvent, message=TextMessageContent)
@@ -78,7 +79,8 @@ def handle_message(event):
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text="你哈囉了！請勿哈囉！")]
+                messages=[TextMessage(text=hello_warning_message)],
+                notification_disabled=True
             )
         )
     elif "心心" in event.message.text:
