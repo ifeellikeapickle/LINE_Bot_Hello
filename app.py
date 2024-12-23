@@ -21,6 +21,20 @@ from linebot.v3.webhooks import (
     TextMessageContent
 )
 
+from google.auth.transport.requests import Request
+from google.oauth2 import service_account
+from google_auth_oauthlib.flow import InstalledAppFlow
+from googleapiclient.discovery import build
+from googleapiclient.errors import HttpError
+
+# If modifying these scopes, delete the file credentials.json.
+SERVICE_ACCOUNT_FILE = "credentials.json"
+SCOPES = ["https://www.googleapis.com/auth/spreadsheets"]
+
+# The ID and range of a sample spreadsheet.
+SPREADSHEET_ID = "1foihGnfiA9n8jW-f0kxvgU6KyLrZd6Ftshw81knMOIU"
+RANGE_NAME = "Sheet1!A2:C"
+
 app = Flask(__name__)
 
 # Load .env file
@@ -63,7 +77,34 @@ def get():
     }
     return jsonify(response)
 
+def append_values(values):
+
+    creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+
+    try:
+        service = build("sheets", "v4", credentials=creds)
+
+        body = {"values": values}
+        result = (
+            service.spreadsheets()
+            .values()
+            .append(
+                spreadsheetId=SPREADSHEET_ID,
+                range=RANGE_NAME,
+                valueInputOption="USER_ENTERED",
+                body=body,
+            )
+            .execute()
+        )
+        print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
+        return result
+
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        return error
+
 keyword_hello = "哈囉"
+keyword_xinxin = "心心"
 hello_warning_message = "請勿哈囉！"
 focus_message = "不好意思大家!我最近比較需要專注，我比較容易分心，有訊息強迫症，我先退出群組了~  有事情可以透過ig或是line找我，謝謝！愛你們"
 allowed_chars = r".*"
@@ -74,6 +115,8 @@ regex = rf"{pattern}"
 def handle_message(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
+        
+    append_values([[event.source.user_id, event.message.id, event.message.text]])
 
     if re.search(regex, event.message.text):
         line_bot_api.reply_message_with_http_info(
@@ -83,11 +126,12 @@ def handle_message(event):
                 notification_disabled=True
             )
         )
-    elif "心心" in event.message.text:
+    elif keyword_xinxin in event.message.text:
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
-                messages=[TextMessage(text=focus_message)]
+                messages=[TextMessage(text=focus_message)],
+                notification_disabled=True
             )
         )
     else:
