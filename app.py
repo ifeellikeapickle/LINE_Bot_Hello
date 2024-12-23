@@ -105,8 +105,10 @@ def append_values(values):
 
 keyword_hello = "哈囉"
 keyword_xinxin = "心心"
+hello_message = "哈囉哈囉"
 hello_warning_message = "請勿哈囉！"
 focus_message = "不好意思大家!我最近比較需要專注，我比較容易分心，有訊息強迫症，我先退出群組了~  有事情可以透過ig或是line找我，謝謝！愛你們"
+uid_adai = "U94caa77e789684671659c08bde60fce1"
 allowed_chars = r".*"
 pattern = allowed_chars.join(keyword_hello)
 regex = rf"{pattern}"
@@ -117,8 +119,16 @@ def handle_message(event):
         line_bot_api = MessagingApi(api_client)
         
     append_values([[event.source.user_id, event.message.id, event.message.text]])
-
-    if re.search(regex, event.message.text):
+    
+    if event.source.user_id == uid_adai:
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=hello_message)],
+                notification_disabled=True
+            )
+        )
+    elif re.search(regex, event.message.text):
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
