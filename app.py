@@ -118,8 +118,6 @@ def handle_message(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         
-    append_values([[event.source.user_id, event.message.id, event.message.text]])
-    
     if event.source.user_id == uid_adai:
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
@@ -146,6 +144,8 @@ def handle_message(event):
         )
     else:
         pass
+    
+    append_values([[event.source.user_id, event.message.id, event.message.text]])
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
