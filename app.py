@@ -13,11 +13,13 @@ from linebot.v3.messaging import (
     Configuration,
     ApiClient,
     MessagingApi,
+    PushMessageRequest,
     ReplyMessageRequest,
     TextMessage
 )
 from linebot.v3.webhooks import (
     MessageEvent,
+    UnsendEvent,
     TextMessageContent
 )
 
@@ -77,6 +79,26 @@ def get():
     }
     return jsonify(response)
 
+def get_values():
+    
+    creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    
+    try:
+        service = build("sheets", "v4", credentials=creds)
+
+        result = (
+            service.spreadsheets()
+            .values()
+            .get(spreadsheetId=SPREADSHEET_ID,
+                 range=RANGE_NAME)
+            .execute()
+        )
+        rows = result.get("values", [])
+        return rows
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        return error
+    
 def append_values(values):
 
     creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -102,7 +124,28 @@ def append_values(values):
     except HttpError as error:
         print(f"An error occurred: {error}")
         return error
-
+    
+def clear_table():
+    
+    creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
+    
+    try:
+        service = build("sheets", "v4", credentials=creds)
+        
+        result = (
+            service.spreadsheets()
+            .values()
+            .clear(
+                spreadsheetId=SPREADSHEET_ID,
+                range=RANGE_NAME,
+            )
+            .execute()
+        )
+        return result
+    except HttpError as error:
+        print(f"An error occurred: {error}")
+        return error
+    
 keyword_hello = "哈囉"
 keyword_xinxin = "心心"
 hello_message = "哈囉哈囉"
@@ -115,6 +158,14 @@ regex = rf"{pattern}"
 
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_message(event):
+    
+    len_row_array = len(get_values())
+    if len_row_array >= 50:
+        clear_table()
+        append_values([[event.source.user_id, event.message.id, event.message.text]])
+    else:
+        append_values([[event.source.user_id, event.message.id, event.message.text]])
+        
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         
@@ -145,7 +196,22 @@ def handle_message(event):
     else:
         pass
     
-    append_values([[event.source.user_id, event.message.id, event.message.text]])
-
+@handler.add(UnsendEvent)
+def handle_unsend(event):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        
+    row_array = get_values()
+    for i in range(len(row_array)-1, -1, -1):
+        if row_array[i][1] == event.unsend.message_id:
+            line_bot_api.push_message_with_http_info(
+            PushMessageRequest(
+                to=event.source.group_id,
+                messages=[TextMessage(text=f"你是不是想要說：「{row_array[i][2]}」")]
+                )
+            )
+        else:
+            pass
+        
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=10000)
