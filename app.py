@@ -118,9 +118,7 @@ def append_values(values):
             )
             .execute()
         )
-        print(f"{(result.get('updates').get('updatedCells'))} cells appended.")
         return result
-
     except HttpError as error:
         print(f"An error occurred: {error}")
         return error
