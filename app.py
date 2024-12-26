@@ -15,11 +15,13 @@ from linebot.v3.messaging import (
     MessagingApi,
     PushMessageRequest,
     ReplyMessageRequest,
+    StickerMessage,
     TextMessage
 )
 from linebot.v3.webhooks import (
     MessageEvent,
     UnsendEvent,
+    StickerMessageContent,
     TextMessageContent
 )
 
@@ -155,7 +157,7 @@ pattern = allowed_chars.join(keyword_hello)
 regex = rf"{pattern}"
 
 @handler.add(MessageEvent, message=TextMessageContent)
-def handle_message(event):
+def handle_text_message(event):
     
     len_row_array = len(get_values())
     if len_row_array >= 50:
@@ -188,6 +190,22 @@ def handle_message(event):
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text=focus_message)],
+                notification_disabled=True
+            )
+        )
+    else:
+        pass
+    
+@handler.add(MessageEvent, message=StickerMessageContent)
+def handle_sticker_message(event):
+    with ApiClient(configuration) as api_client:
+        line_bot_api = MessagingApi(api_client)
+        
+    if event.source.user_id == uid_adai:
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=hello_message)],
                 notification_disabled=True
             )
         )
