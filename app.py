@@ -148,8 +148,10 @@ def clear_table():
     
 keyword_hello = "哈囉"
 keyword_xinxin = "心心"
+keyword_atall = "@All"
 hello_message = "哈囉哈囉"
 hello_warning_message = "請勿哈囉！"
+atall_warning_message = "不好意思 可以不要隨便使用@All嗎"
 focus_message = "不好意思大家!我最近比較需要專注，我比較容易分心，有訊息強迫症，我先退出群組了~  有事情可以透過ig或是line找我，謝謝！愛你們"
 uid_adai = "U94caa77e789684671659c08bde60fce1"
 allowed_chars = r".*"
@@ -182,6 +184,14 @@ def handle_text_message(event):
             ReplyMessageRequest(
                 reply_token=event.reply_token,
                 messages=[TextMessage(text=hello_warning_message)],
+                notification_disabled=True
+            )
+        )
+    elif keyword_atall in event.message.text:
+        line_bot_api.reply_message_with_http_info(
+            ReplyMessageRequest(
+                reply_token=event.reply_token,
+                messages=[TextMessage(text=atall_warning_message)],
                 notification_disabled=True
             )
         )
