@@ -192,7 +192,7 @@ def handle_unsend(event):
                 PushMessageRequest(
                     to=event.source.group_id,
                     messages=[TextMessage(
-                        text=f"你是不是想要說：「{unsend_message}」"
+                        text=f"你是不是想要說：\n\n「{unsend_message}」"
                     )]
                 )
             )
