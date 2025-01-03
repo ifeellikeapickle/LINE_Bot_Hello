@@ -177,15 +177,7 @@ def handle_sticker_message(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         
-    if True:
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text=MESSAGE_NEWYEAR)],
-                notification_disabled=False
-            )
-        )
-    elif event.source.user_id == UID_ADAI:
+    if event.source.user_id == UID_ADAI:
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
