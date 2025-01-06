@@ -128,15 +128,15 @@ def handle_text_message(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
         
-    if event.source.user_id == UID_ADAI:
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text=MESSAGE_HELLO)],
-                notification_disabled=True
-            )
-        )
-    elif KEYWORD_TAGALL in event.message.text:
+#     if event.source.user_id == UID_ADAI:
+#         line_bot_api.reply_message_with_http_info(
+#             ReplyMessageRequest(
+#                 reply_token=event.reply_token,
+#                 messages=[TextMessage(text=MESSAGE_HELLO)],
+#                 notification_disabled=True
+#             )
+#         )
+    if KEYWORD_TAGALL in event.message.text:
         line_bot_api.reply_message_with_http_info(
             ReplyMessageRequest(
                 reply_token=event.reply_token,
@@ -163,21 +163,21 @@ def handle_text_message(event):
     else:
         pass
 
-@handler.add(MessageEvent, message=StickerMessageContent)
-def handle_sticker_message(event):
-    with ApiClient(configuration) as api_client:
-        line_bot_api = MessagingApi(api_client)
-        
-    if event.source.user_id == UID_ADAI:
-        line_bot_api.reply_message_with_http_info(
-            ReplyMessageRequest(
-                reply_token=event.reply_token,
-                messages=[TextMessage(text=MESSAGE_HELLO)],
-                notification_disabled=True
-            )
-        )
-    else:
-        pass
+# @handler.add(MessageEvent, message=StickerMessageContent)
+# def handle_sticker_message(event):
+#     with ApiClient(configuration) as api_client:
+#         line_bot_api = MessagingApi(api_client)
+#         
+#     if event.source.user_id == UID_ADAI:
+#         line_bot_api.reply_message_with_http_info(
+#             ReplyMessageRequest(
+#                 reply_token=event.reply_token,
+#                 messages=[TextMessage(text=MESSAGE_HELLO)],
+#                 notification_disabled=True
+#             )
+#         )
+#     else:
+#         pass
 
 @handler.add(UnsendEvent)
 def handle_unsend(event):
