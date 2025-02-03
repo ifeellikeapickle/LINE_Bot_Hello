@@ -98,7 +98,8 @@ def get():
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
     
-    while messages_ref.get() == None:
+    # Push a default message if the database is empty
+    while messages_ref.get() is None:
         messages_ref.push({
             "order": 0,
             "user_id": "UID",
@@ -107,6 +108,7 @@ def handle_text_message(event):
         })
         
     # Variable latest_message is a dictionary
+    # Get the order of the last message and push the current message to the database
     latest_message = messages_ref.order_by_key().limit_to_last(1).get()
     for key in latest_message:
         order = messages_ref.child(key).child("order").get() - 1
@@ -117,6 +119,7 @@ def handle_text_message(event):
         "message_text": event.message.text
     })
     
+    # Delete the oldest message if the messages exceed
     if len(messages_ref.get()) > MAX_MESSAGE_LENGTH:
         # Variable oldest_message is a dictionary
         oldest_message = messages_ref.order_by_key().limit_to_first(1).get()
