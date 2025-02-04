@@ -34,9 +34,11 @@ from config import (
     KEYWORD_XINXIN,
     MESSAGE_FOCUS,
     MESSAGE_NEWLINE,
+    MESSAGE_SUBWAY,
     WARNING_MESSAGE_HELLO,
     WARNING_MESSAGE_TAGALL,
     WARNING_MESSAGE_TAGSELF,
+    UID_PANG,
     MAX_MESSAGE_LENGTH
 )
 
@@ -145,6 +147,7 @@ def handle_text_message(event):
         mentionees_list     = event.message.mention.mentionees
         mention_all         = False
         mention_self        = False
+        mention_pang        = False
         for mentionee in mentionees_list:
             if mentionee.type == "all":
                 mention_all = True
@@ -152,10 +155,14 @@ def handle_text_message(event):
                 if mentionee.is_self:
                     mention_self = True
                     dont_warn_hello = True
+                if mentionee.user_id == UID_PANG:
+                    mention_pang = True
         if mention_all:
             reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGALL)
         if mention_self:
             reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGSELF)
+        if mention_pang:
+            reply_message_text = add_message(reply_message_text, MESSAGE_SUBWAY)
     if re.search(regex, event.message.text) and not dont_warn_hello:
         reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_HELLO)
     if KEYWORD_XINXIN in event.message.text:
