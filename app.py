@@ -32,13 +32,18 @@ from firebase_admin import db
 from config import (
     KEYWORD_HELLO,
     KEYWORD_XINXIN,
-    KEYWORD_TAGALL,
     MESSAGE_FOCUS,
     MESSAGE_NEWLINE,
     WARNING_MESSAGE_HELLO,
     WARNING_MESSAGE_TAGALL,
+    WARNING_MESSAGE_TAGSELF,
     MAX_MESSAGE_LENGTH
 )
+
+def add_message(messages, new_message):
+    if messages:
+        messages += MESSAGE_NEWLINE
+    messages += new_message
 
 app = Flask(__name__)
 
@@ -135,32 +140,27 @@ def handle_text_message(event):
     reply_message_text = ""
     
 #    if event.source.user_id == UID_ADAI:
-
-    if "這是標記你懂的" in event.message.text:
-        if reply_message_text:
-            reply_message_text += MESSAGE_NEWLINE
-        mentionees_list = event.message.mention.mentionees
+    
+    if event.message.mention is not None:
+        mentionees_list     = event.message.mention.mentionees
+        mention_all         = False
+        mention_self        = False
+        dont_warn_hello     = False
         for mentionee in mentionees_list:
             if mentionee.type == "all":
-                pass
-            elif mentionee.type == "user":
-                reply_message_text += mentionee.user_id
+                mention_all = True
+            if mentionee.type == "user":
                 if mentionee.is_self:
-                    reply_message_text += "TRUE"
-                else:
-                    reply_message_text += "FALSE"
-    if KEYWORD_TAGALL in event.message.text:
-        if reply_message_text:
-            reply_message_text += MESSAGE_NEWLINE
-        reply_message_text += WARNING_MESSAGE_TAGALL
-    if re.search(regex, event.message.text):
-        if reply_message_text:
-            reply_message_text += MESSAGE_NEWLINE
-        reply_message_text += WARNING_MESSAGE_HELLO
+                    mention_self = True
+                    dont_warn_hello = True
+        if mention_all:
+            add_message(reply_message_text, WARNING_MESSAGE_TAGALL)
+        if mention_self:
+            add_message(reply_message_text, WARNING_MESSAGE_TAGSELF)
+    if re.search(regex, event.message.text) and not dont_warn_hello:
+        add_message(reply_message_text, WARNING_MESSAGE_HELLO)
     if KEYWORD_XINXIN in event.message.text:
-        if reply_message_text:
-            reply_message_text += MESSAGE_NEWLINE
-        reply_message_text += MESSAGE_FOCUS
+        add_message(reply_message_text, MESSAGE_FOCUS)
         
     if reply_message_text:
         line_bot_api.reply_message_with_http_info(
