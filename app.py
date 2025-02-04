@@ -40,11 +40,6 @@ from config import (
     MAX_MESSAGE_LENGTH
 )
 
-def add_message(messages, new_message):
-    if messages:
-        messages += MESSAGE_NEWLINE
-    messages += new_message
-
 app = Flask(__name__)
 
 # Load .env file
@@ -104,6 +99,11 @@ def get():
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
     
+    def add_message(messages, new_message):
+        if messages:
+            messages += MESSAGE_NEWLINE
+        messages += new_message
+    
     # Push a default message if the database is empty
     while messages_ref.get() is None:
         messages_ref.push({
@@ -137,15 +137,13 @@ def handle_text_message(event):
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
     
-    reply_message_text = ""
-    
-#    if event.source.user_id == UID_ADAI:
+    reply_message_text  = ""
+    dont_warn_hello     = False
     
     if event.message.mention is not None:
         mentionees_list     = event.message.mention.mentionees
         mention_all         = False
         mention_self        = False
-        dont_warn_hello     = False
         for mentionee in mentionees_list:
             if mentionee.type == "all":
                 mention_all = True
