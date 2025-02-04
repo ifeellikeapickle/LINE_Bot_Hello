@@ -129,7 +129,7 @@ def handle_text_message(event):
     else:
         pass
     
-    reply_message_text = None
+    reply_message_text = ""
     
 #     if event.source.user_id == UID_ADAI:
 #         line_bot_api.reply_message_with_http_info(
@@ -141,25 +141,25 @@ def handle_text_message(event):
 #         )
 
     if KEYWORD_TAGALL in event.message.text:
-        if reply_message_text is not None:
+        if reply_message_text:
             reply_message_text += MESSAGE_NEWLINE
         reply_message_text += WARNING_MESSAGE_TAGALL
     elif re.search(regex, event.message.text):
-        if reply_message_text is not None:
+        if reply_message_text:
             reply_message_text += MESSAGE_NEWLINE
         reply_message_text += WARNING_MESSAGE_HELLO
     elif KEYWORD_XINXIN in event.message.text:
-        if reply_message_text is not None:
+        if reply_message_text:
             reply_message_text += MESSAGE_NEWLINE
         reply_message_text += MESSAGE_FOCUS
     elif "這是標記你懂的" in event.message.text:
-        if reply_message_text is not None:
+        if reply_message_text:
             reply_message_text += MESSAGE_NEWLINE
         reply_message_text += event.message.mention.mentionees
     else:
         pass
     
-    if reply_message_text is not None:
+    if reply_message_text:
         with ApiClient(configuration) as api_client:
             line_bot_api = MessagingApi(api_client)
         line_bot_api.reply_message_with_http_info(
