@@ -139,7 +139,16 @@ def handle_text_message(event):
     if "這是標記你懂的" in event.message.text:
         if reply_message_text:
             reply_message_text += MESSAGE_NEWLINE
-        reply_message_text += event.message.mention.mentionees
+        mentionees_list = event.message.mention.mentionees
+        for mentionee in mentionees_list:
+            if mentionee.type == "all":
+                pass
+            elif mentionee.type == "user":
+                reply_message_text += mentionee.user_id
+                if mentionee.is_self:
+                    reply_message_text += "TRUE"
+                else:
+                    reply_message_text += "FALSE"
     if KEYWORD_TAGALL in event.message.text:
         if reply_message_text:
             reply_message_text += MESSAGE_NEWLINE
