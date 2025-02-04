@@ -40,6 +40,12 @@ from config import (
     MAX_MESSAGE_LENGTH
 )
 
+def add_message(messages, new_message):
+    if messages:
+        messages += MESSAGE_NEWLINE
+    messages += new_message
+    return messages
+
 app = Flask(__name__)
 
 # Load .env file
@@ -99,11 +105,6 @@ def get():
 @handler.add(MessageEvent, message=TextMessageContent)
 def handle_text_message(event):
     
-    def add_message(messages, new_message):
-        if messages:
-            messages += MESSAGE_NEWLINE
-        messages += new_message
-    
     # Push a default message if the database is empty
     while messages_ref.get() is None:
         messages_ref.push({
@@ -152,13 +153,13 @@ def handle_text_message(event):
                     mention_self = True
                     dont_warn_hello = True
         if mention_all:
-            add_message(reply_message_text, WARNING_MESSAGE_TAGALL)
+            reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGALL)
         if mention_self:
-            add_message(reply_message_text, WARNING_MESSAGE_TAGSELF)
+            reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGSELF)
     if re.search(regex, event.message.text) and not dont_warn_hello:
-        add_message(reply_message_text, WARNING_MESSAGE_HELLO)
+        reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_HELLO)
     if KEYWORD_XINXIN in event.message.text:
-        add_message(reply_message_text, MESSAGE_FOCUS)
+        reply_message_text = add_message(reply_message_text, MESSAGE_FOCUS)
         
     if reply_message_text:
         line_bot_api.reply_message_with_http_info(
