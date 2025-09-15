@@ -137,6 +137,7 @@ def handle_text_message(event):
     else:
         pass
     
+    # Get ApiClient ready for reply
     with ApiClient(configuration) as api_client:
         line_bot_api = MessagingApi(api_client)
     
@@ -157,16 +158,16 @@ def handle_text_message(event):
                     dont_warn_hello = True
                 if mentionee.user_id == UID_PANG:
                     mention_pang = True
-        if mention_all:
-            reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGALL)
+#        if mention_all:
+#            reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGALL)
         if mention_self:
             reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGSELF)
-        if mention_pang:
-            reply_message_text = add_message(reply_message_text, MESSAGE_SUBWAY)
+#        if mention_pang:
+#            reply_message_text = add_message(reply_message_text, MESSAGE_SUBWAY)
     if re.search(regex, event.message.text) and not dont_warn_hello:
-        reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_HELLO)
-    if KEYWORD_XINXIN in event.message.text:
-        reply_message_text = add_message(reply_message_text, MESSAGE_FOCUS)
+        reply_message_text = add_message(reply_message_text, MESSAGE_FUCKPY)
+#    if KEYWORD_XINXIN in event.message.text:
+#        reply_message_text = add_message(reply_message_text, MESSAGE_FOCUS)
         
     if reply_message_text:
         line_bot_api.reply_message_with_http_info(
