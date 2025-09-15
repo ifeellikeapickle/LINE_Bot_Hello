@@ -40,6 +40,7 @@ from config import (
     WARNING_MESSAGE_TAGALL,
     WARNING_MESSAGE_TAGSELF,
     UID_PANG,
+    UID_NWEI,
     MAX_MESSAGE_LENGTH
 )
 
@@ -167,7 +168,7 @@ def handle_text_message(event):
 #            reply_message_text = add_message(reply_message_text, MESSAGE_SUBWAY)
 #    if re.search(regex, event.message.text) and not dont_warn_hello:
 #        reply_message_text = add_message(reply_message_text, MESSAGE_FUCKPY)
-    if event.source.user_id == UID_PANG:
+    if event.source.user_id == UID_NWEI:
         reply_message_text = add_message(reply_message_text, MESSAGE_FUCKPY)
 #    if KEYWORD_XINXIN in event.message.text:
 #        reply_message_text = add_message(reply_message_text, MESSAGE_FOCUS)
