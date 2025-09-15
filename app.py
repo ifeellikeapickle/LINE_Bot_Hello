@@ -35,6 +35,7 @@ from config import (
     MESSAGE_FOCUS,
     MESSAGE_NEWLINE,
     MESSAGE_SUBWAY,
+    MESSAGE_FUCKPY,
     WARNING_MESSAGE_HELLO,
     WARNING_MESSAGE_TAGALL,
     WARNING_MESSAGE_TAGSELF,
@@ -164,7 +165,9 @@ def handle_text_message(event):
             reply_message_text = add_message(reply_message_text, WARNING_MESSAGE_TAGSELF)
 #        if mention_pang:
 #            reply_message_text = add_message(reply_message_text, MESSAGE_SUBWAY)
-    if re.search(regex, event.message.text) and not dont_warn_hello:
+#    if re.search(regex, event.message.text) and not dont_warn_hello:
+#        reply_message_text = add_message(reply_message_text, MESSAGE_FUCKPY)
+    if event.source.user_id == UID_PANG:
         reply_message_text = add_message(reply_message_text, MESSAGE_FUCKPY)
 #    if KEYWORD_XINXIN in event.message.text:
 #        reply_message_text = add_message(reply_message_text, MESSAGE_FOCUS)
